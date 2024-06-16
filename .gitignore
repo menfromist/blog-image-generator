@@ -1,1 +1,6 @@
-!fonts/AppleSDGothicNeo.ttc
+# .gitignore
+*.pyc
+__pycache__/
+static/uploads/*
+fonts/*
+!fonts/AppleSDGothicNeo.ttc  # 폰트 파일 제외

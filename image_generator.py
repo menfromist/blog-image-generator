@@ -45,6 +45,7 @@ def generate_image():
             
             # 프로젝트 폴더 내의 AppleSDGothicNeo 폰트 파일을 참조
             font_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fonts', 'AppleSDGothicNeo.ttc')
+            print(f"Font path: {font_path}")  # 폰트 경로를 로그에 출력
             font = ImageFont.truetype(font_path, size=int(font_size))
             
             # 사용자가 지정한 줄바꿈을 그대로 사용
