@@ -45,7 +45,7 @@ def generate_image():
         draw = ImageDraw.Draw(image)
         
         # 폰트 크기를 사용자가 지정한 크기로 설정
-        font_path = "/System/Library/Fonts/AppleSDGothicNeo.ttc"
+        font_path = "AppleSDGothicNeo.ttc"
         font = ImageFont.truetype(font_path, size=int(font_size))
         
         # 사용자가 지정한 줄바꿈을 그대로 사용
