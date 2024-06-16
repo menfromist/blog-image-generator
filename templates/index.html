@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Image Generator</title>
+</head>
+<body>
+    <h1>Blog Image Generator</h1>
+    <form action="/summarize" method="post" enctype="multipart/form-data">
+        <label for="url">Blog URL:</label>
+        <input type="text" id="url" name="url" required><br><br>
+        <label for="image">Upload Background Image:</label>
+        <input type="file" id="image" name="image" accept="image/*" required><br><br>
+        <button type="submit">Summarize and Review</button>
+    </form>
+</body>
+</html>
