@@ -1,94 +1,62 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session
+from flask import Flask, request, render_template, send_file
 from PIL import Image, ImageDraw, ImageFont
+import textwrap
 import os
-import summarizer  # summarizer 모듈을 가져옴
+import io
+import summarizer
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'static/uploads/'
-app.secret_key = 'your_secret_key'
 
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+# 폰트 경로
+font_path = "/System/Library/Fonts/AppleSDGothicNeo.ttc"
+
+def draw_text(draw, text, position, font, max_width, line_spacing):
+    """
+    주어진 텍스트를 이미지에 그립니다.
+    """
+    lines = textwrap.wrap(text, width=max_width)
+    y = position[1]
+    for line in lines:
+        width, height = draw.textsize(line, font=font)
+        draw.rectangle([position, (position[0] + width, y + height)], fill="black")
+        draw.text((position[0], y), line, font=font, fill="white")
+        y += height + line_spacing
 
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
 
 @app.route('/summarize', methods=['POST'])
 def summarize():
     blog_url = request.form['url']
-    image_file = request.files['image']
-
-    if image_file:
-        image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_file.filename)
-        image_file.save(image_path)
-
-        summarized_text = summarizer.summarize_blog(blog_url, 9)
-        session['summarized_text'] = summarized_text
-        session['image_path'] = image_path
-
-        return render_template('review.html', summarized_text=summarized_text)
-
-    return redirect(url_for('home'))
+    summarized_text = summarizer.summarize_blog(blog_url, 9)
+    return render_template('review.html', summarized_text=summarized_text)
 
 @app.route('/generate', methods=['POST'])
 def generate_image():
-    try:
-        summarized_text = request.form.getlist('sentence')
-        font_sizes = request.form.getlist('fontsize')
-        image_path = session.get('image_path')
-        generated_images = []
+    summarized_text = request.form.getlist('summarized_text')
+    font_size = int(request.form['font_size'])
+    font = ImageFont.truetype(font_path, size=font_size)
+    images = []
 
-        for i, (sentence, font_size) in enumerate(zip(summarized_text, font_sizes)):
-            image = Image.open(image_path)
-            draw = ImageDraw.Draw(image)
-            
-            # 프로젝트 폴더 내의 AppleSDGothicNeo 폰트 파일을 참조
-            font_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fonts', 'AppleSDGothicNeo.ttc')
-            print(f"Font path: {font_path}")  # 폰트 경로를 로그에 출력
-            if not os.path.exists(font_path):
-                print("Font file does not exist.")
-                return "Font file not found", 500
+    for i, text in enumerate(summarized_text):
+        # 새로운 이미지 생성
+        img = Image.new('RGB', (800, 600), color=(255, 255, 255))
+        draw = ImageDraw.Draw(img)
+        
+        # 텍스트 줄간격 설정 (기존 줄간격의 2배)
+        line_spacing = font_size
 
-            try:
-                font = ImageFont.truetype(font_path, size=int(font_size))
-            except Exception as e:
-                print(f"Error loading font: {e}")
-                return f"Error loading font: {e}", 500
-            
-            # 사용자가 지정한 줄바꿈을 그대로 사용
-            lines = sentence.split('\n')
-            max_width = max(draw.textlength(line, font=font) for line in lines)
-            line_height = (draw.textbbox((0, 0), 'A', font=font)[3] - draw.textbbox((0, 0), 'A', font=font)[1]) * 2  # 줄 간격을 두 배로 조정
-            total_height = line_height * len(lines)
+        # 텍스트 그리기
+        draw_text(draw, text, (10, 10), font, max_width=60, line_spacing=line_spacing)
 
-            # 중앙 위치 계산 (이미지의 중앙에서 텍스트의 절반 너비와 높이를 뺀 위치)
-            text_x = (image.width - max_width) / 2
-            text_y = (image.height - total_height) / 2
+        # 이미지 저장
+        output = io.BytesIO()
+        img.save(output, format='PNG')
+        output.seek(0)
+        images.append(output)
 
-            # 텍스트 배경 그리기 및 텍스트 그리기
-            current_y = text_y
-            for line in lines:
-                bbox = draw.textbbox((text_x, current_y), line, font=font)
-                background_position = (bbox[0] - int(int(font_size) * 0.28), bbox[1] - int(int(font_size) * 0.14), bbox[2] + int(int(font_size) * 0.28), bbox[3] + int(int(font_size) * 0.14))
-                draw.rectangle(background_position, fill="black")
-                draw.text((text_x, current_y), line, font=font, fill="white")
-                current_y += line_height
-
-            output_image_filename = f'output_{i+1}_{os.path.basename(image_path)}'
-            output_image_path = os.path.join(app.config['UPLOAD_FOLDER'], output_image_filename)
-            image.save(output_image_path, quality=95)
-            generated_images.append(output_image_filename)
-
-        return render_template('result.html', image_urls=generated_images)
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return "Internal Server Error", 500
-
-@app.route('/download/<filename>')
-def download_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
+    return render_template('result.html', images=images)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=True)

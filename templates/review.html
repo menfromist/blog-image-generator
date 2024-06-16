@@ -1,26 +1,18 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
     <title>Review Summarized Text</title>
-    <style>
-        textarea {
-            width: 100%;
-            height: 100px;
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
 <body>
     <h1>Review Summarized Text</h1>
     <form action="/generate" method="post">
         {% for sentence in summarized_text %}
-            <textarea name="sentence">{{ sentence }}</textarea><br><br>
-            <label for="fontsize">Font Size:</label>
-            <input type="number" name="fontsize" value="54"><br><br>
+            <textarea name="summarized_text">{{ sentence }}</textarea><br>
         {% endfor %}
-        <button type="submit">Generate Images</button>
+        <label for="font_size">Font Size:</label>
+        <input type="number" id="font_size" name="font_size" value="36"><br><br>
+        <input type="submit" value="Generate Images">
     </form>
 </body>
 </html>

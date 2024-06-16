@@ -1,32 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
     <title>Generated Images</title>
-    <style>
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-        .image-grid img {
-            width: 100%;
-            height: auto;
-        }
-    </style>
 </head>
 <body>
     <h1>Generated Images</h1>
-    <div class="image-grid">
-        {% for image_url in image_urls %}
-            <div>
-                <img src="{{ url_for('static', filename='uploads/' ~ image_url) }}" alt="Generated Image {{ loop.index }}">
-                <br>
-                <a href="{{ url_for('download_file', filename=image_url) }}">Download</a>
+    <div style="display: flex; flex-wrap: wrap;">
+        {% for img in images %}
+            <div style="margin: 10px;">
+                <img src="data:image/png;base64,{{ img.getvalue()|b64encode }}" alt="Generated Image">
             </div>
         {% endfor %}
     </div>
-    <a href="/">Go Back</a>
 </body>
 </html>
