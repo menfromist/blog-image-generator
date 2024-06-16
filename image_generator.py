@@ -9,7 +9,7 @@ import base64
 app = Flask(__name__)
 
 # 폰트 경로
-font_path = "fonts/AppleSDGothicNeo.ttc"
+font_path = "/fonts/AppleSDGothicNeo.ttc"
 
 def draw_text(draw, text, position, font, max_width, line_spacing):
     """
@@ -42,12 +42,12 @@ def generate_image():
     images = []
 
     for i, text in enumerate(summarized_text):
-        # 새로운 이미지 생성
-        img = Image.new('RGB', (800, 600), color=(255, 255, 255))
+        # 배경 이미지 불러오기
+        img = Image.open("/background/image.png")
         draw = ImageDraw.Draw(img)
         
         # 텍스트 줄간격 설정 (기존 줄간격의 2배)
-        line_spacing = font_size
+        line_spacing = font_size * 1.5
 
         # 텍스트 그리기
         draw_text(draw, text, (10, 10), font, max_width=60, line_spacing=line_spacing)
@@ -62,4 +62,4 @@ def generate_image():
     return render_template('result.html', images=images)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=10000, debug=True)
