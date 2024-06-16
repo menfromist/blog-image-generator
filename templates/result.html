@@ -9,7 +9,7 @@
     <div style="display: flex; flex-wrap: wrap;">
         {% for img in images %}
             <div style="margin: 10px;">
-                <img src="data:image/png;base64,{{ img.getvalue()|b64encode }}" alt="Generated Image">
+                <img src="data:image/png;base64,{{ img }}" alt="Generated Image">
             </div>
         {% endfor %}
     </div>
