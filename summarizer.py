@@ -1,12 +1,15 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 from google.cloud import language_v1
-import os
 
 # Google Cloud Language API 설정
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/opt/render/project/src/credentials/amplified-grail-426504-k8-fe1e47809d84.json"
 
 def fetch_blog_text(blog_url):
+    """
+    주어진 블로그 URL에서 텍스트를 가져옵니다.
+    """
     response = requests.get(blog_url)
     soup = BeautifulSoup(response.text, 'html.parser')
     paragraphs = soup.find_all('p')
@@ -14,6 +17,9 @@ def fetch_blog_text(blog_url):
     return blog_text
 
 def summarize_text_with_gemini(text, num_sentences=9):
+    """
+    Google Cloud Language API를 사용하여 텍스트를 요약합니다.
+    """
     client = language_v1.LanguageServiceClient()
 
     document = language_v1.Document(content=text, type_=language_v1.Document.Type.PLAIN_TEXT)
@@ -24,6 +30,9 @@ def summarize_text_with_gemini(text, num_sentences=9):
     return summarized
 
 def summarize_blog(blog_url, num_sentences=9):
+    """
+    블로그 URL에서 텍스트를 가져오고 요약합니다.
+    """
     blog_text = fetch_blog_text(blog_url)
     summary = summarize_text_with_gemini(blog_text, num_sentences)
     return summary
