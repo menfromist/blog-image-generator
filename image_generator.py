@@ -8,7 +8,7 @@ import summarizer
 app = Flask(__name__)
 
 # 폰트 경로
-font_path = "/System/Library/Fonts/AppleSDGothicNeo.ttc"
+font_path = "/fonts/AppleSDGothicNeo.ttc"
 
 def draw_text(draw, text, position, font, max_width, line_spacing):
     """
