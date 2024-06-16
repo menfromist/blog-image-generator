@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 import summarizer  # summarizer 모듈을 가져옴
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/jaehunlee/blog_image_app/amplified-grail-426504-k8-fe1e47809d84.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "amplified-grail-426504-k8-fe1e47809d84.json"
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
