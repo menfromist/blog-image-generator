@@ -4,7 +4,7 @@ from google.cloud import language_v1
 import os
 
 # Google Cloud Language API 설정
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/jaehunlee/Downloads/amplified-grail-426504-k8-fe1e47809d84.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/opt/render/project/src/credentials/amplified-grail-426504-k8-fe1e47809d84.json"
 
 def fetch_blog_text(blog_url):
     response = requests.get(blog_url)

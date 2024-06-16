@@ -4,3 +4,5 @@ __pycache__/
 static/uploads/*
 fonts/*
 !fonts/AppleSDGothicNeo.ttc  # 폰트 파일 제외
+credentials/*
+!credentials/amplified-grail-426504-k8-fe1e47809d84.json  # 자격 증명 파일 제외
